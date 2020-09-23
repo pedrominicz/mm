@@ -11,16 +11,39 @@ module Lex (Token(..), tokenize) where
 -- > following characters which are the "white-space" characters: space (a
 -- > printable character), tab, carriage return, line feed, and form feed.
 
-$valid = [\33-\126]
+-- All valid ASCII characters except `$`.
+$valid = [\33-\35\37-\126]
 
 tokens :-
   $white+ ;
+  "$c"    { const Constant }
+  "$v"    { const Variable }
+  "$d"    { const Disjoint }
+  "$f"    { const Floating }
+  "$e"    { const Essential }
+  "$a"    { const Axiom }
+  "$p"    { const Proof }
+  "$="    { const Equal }
+  "$."    { const Dot }
+  "${"    { const Begin }
+  "$}"    { const End }
   $valid+ { Token }
 
 {
 data Token
-  = Token String
-  deriving (Show)
+  = Constant  -- `$c`
+  | Variable  -- `$v`
+  | Disjoint  -- `$d`
+  | Floating  -- `$f`
+  | Essential -- `$e`
+  | Axiom     -- `$a`
+  | Proof     -- `$p`
+  | Equal     -- `$=`
+  | Dot       -- `$.`
+  | Begin     -- `${`
+  | End       -- `$}`
+  | Token String
+  deriving (Eq, Show)
 
 tokenize :: String -> Maybe [Token]
 tokenize str = go ('\n', [], str)
