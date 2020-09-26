@@ -14,6 +14,8 @@ module Lex (Token(..), tokenize) where
 -- All valid ASCII characters except `$`.
 $valid = [\33-\35\37-\126]
 
+-- Currently comments and file imports are not supported. The lexer will fail
+-- upon encountering `$(`, `$)`, `$[`, or `$]`.
 tokens :-
   $white+ ;
   "$c"    { const Constant }
@@ -50,8 +52,8 @@ tokenize str = go ('\n', [], str)
   where
   go input@(_, _, str) =
     case alexScan input 0 of
-      AlexEOF            -> Just []
-      AlexError _        -> Nothing
+      AlexEOF -> Just []
+      AlexError _ -> Nothing
       AlexSkip input len -> go input
       AlexToken input len act -> do
         rest <- go input
