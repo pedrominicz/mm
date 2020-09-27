@@ -4,32 +4,38 @@ module Lex (Token(..), tokenize) where
 
 %wrapper "basic"
 
--- From the Metamath book, chapter 4:
+-- From the Metamath book (4.1.1):
 --
 -- > The only only characters that are allowed to appear in a Metamath source
 -- > file are the 94 non-whitespace printable ASCII characters [...] plus the
 -- > following characters which are the "white-space" characters: space (a
 -- > printable character), tab, carriage return, line feed, and form feed.
 
--- All valid ASCII characters except `$`.
-$valid = [\33-\35\37-\126]
+-- Valid *label tokens* (letters, digits, and the characters `-`, `.`, and
+-- `_`).
+$label = [\45\46\48-\57\65-\90\95\97-\122]
+-- Valid *math symbol token* characters (printable, non-whitespace ASCII
+-- characters except `$`).
+$symbol = [\33-\35\37-\126]
 
--- Currently comments and file imports are not supported. The lexer will fail
--- upon encountering `$(`, `$)`, `$[`, or `$]`.
+-- Currently only the *basic language* of Metamath is supported (see section
+-- 4.2), this means comments and file imports are not supported. The lexer will
+-- fail upon encountering `$(`, `$)`, `$[`, or `$]`.
 tokens :-
-  $white+ ;
-  "$c"    { const Constant }
-  "$v"    { const Variable }
-  "$d"    { const Disjoint }
-  "$f"    { const Floating }
-  "$e"    { const Essential }
-  "$a"    { const Axiom }
-  "$p"    { const Proof }
-  "$="    { const Equal }
-  "$."    { const Dot }
-  "${"    { const Begin }
-  "$}"    { const End }
-  $valid+ { Token }
+  $white+   ;
+  "$c"      { const Constant }
+  "$v"      { const Variable }
+  "$d"      { const Disjoint }
+  "$f"      { const Floating }
+  "$e"      { const Essential }
+  "$a"      { const Axiom }
+  "$p"      { const Proof }
+  "$="      { const Equal }
+  "$."      { const Dot }
+  "${"      { const Begin }
+  "$}"      { const End }
+  $label+   { Label }
+  $symbol+  { Symbol }
 
 {
 data Token
@@ -44,7 +50,8 @@ data Token
   | Dot       -- `$.`
   | Begin     -- `${`
   | End       -- `$}`
-  | Token String
+  | Label String
+  | Symbol String
   deriving (Eq, Show)
 
 tokenize :: String -> Maybe [Token]

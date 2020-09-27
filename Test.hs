@@ -7,7 +7,10 @@ import Data.List
 import System.Exit
 
 test0 :: Bool
-test0 = tokenize "hello world ${ $} $c $v $f $e $d $a $p $. $= ! ~" == Just [Token "hello", Token "world", Begin, End, Constant, Variable, Floating, Essential, Disjoint, Axiom, Proof, Dot, Equal, Token "!", Token "~"]
+test0 = tokenize "hello world ${ $} $c $v $f $e $d $a $p $. $= ! ~" == Just [Label "hello", Label "world", Begin, End, Constant, Variable, Floating, Essential, Disjoint, Axiom, Proof, Dot, Equal, Symbol "!", Symbol "~"]
+
+test1 :: Bool
+test1 = tokenize "label._-" == Just [Label "label._-"]
 
 tests :: [Bool]
 tests =
