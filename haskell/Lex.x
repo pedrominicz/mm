@@ -11,14 +11,14 @@ module Lex (Token(..), tokenize) where
 -- > following characters which are the "white-space" characters: space (a
 -- > printable character), tab, carriage return, line feed, and form feed.
 
--- Valid *label tokens* (letters, digits, and the characters `-`, `.`, and
+-- Valid _label tokens_ (letters, digits, and the characters `-`, `.`, and
 -- `_`).
 $label = [\45\46\48-\57\65-\90\95\97-\122]
--- Valid *math symbol token* characters (printable, non-whitespace ASCII
+-- Valid _math symbol token_ characters (printable, non-whitespace ASCII
 -- characters except `$`).
 $symbol = [\33-\35\37-\126]
 
--- Currently only the *basic language* of Metamath is supported (see section
+-- Currently only the _basic language_ of Metamath is supported (see section
 -- 4.2), this means comments and file imports are not supported. The lexer will
 -- fail upon encountering `$(`, `$)`, `$[`, or `$]`.
 tokens :-
@@ -62,7 +62,7 @@ tokenize str = go ('\n', [], str)
       AlexEOF -> Just []
       AlexError _ -> Nothing
       AlexSkip input len -> go input
-      AlexToken input len act -> do
+      AlexToken input len action -> do
         rest <- go input
-        return (act (take len str) : rest)
+        return (action (take len str) : rest)
 }
