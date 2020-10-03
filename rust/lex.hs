@@ -1,11 +1,13 @@
+use std::collections::HashSet;
 use std::collections::VecDeque;
 use std::fs::File;
 use std::io::Read;
-use std::path::{Path, PathBuf};
+use std::path::Path;
+use std::path::PathBuf;
 
 pub struct Lexer {
     token_buffer: VecDeque<String>,
-    imported_files: Vec<PathBuf>,
+    imported_files: HashSet<PathBuf>,
 }
 
 impl Lexer {
@@ -38,7 +40,7 @@ impl Lexer {
 
         self.token_buffer = token_buffer;
 
-        self.imported_files.push(path);
+        self.imported_files.insert(path);
     }
 }
 
