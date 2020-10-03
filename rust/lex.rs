@@ -14,7 +14,7 @@ impl Lexer {
     pub fn new() -> Self {
         Lexer {
             token_buffer: VecDeque::new(),
-            imported_files: Vec::new(),
+            imported_files: HashSet::new(),
         }
     }
 
